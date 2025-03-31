@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 @Configuration
 @ConfigurationProperties("sfg.aiapp")
-public class VectoreStoreProperties {
+public class VectorStoreProperties {
 
     private String vectorStorePath;
     private List<Resource> documentsToLoad;

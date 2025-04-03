@@ -14,6 +14,7 @@ import org.springframework.ai.converter.BeanOutputConverter;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.SimpleVectorStore;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ import java.util.Map;
 public class OpenAIServiceImpl implements OpenAIService {
 
     private final ChatModel chatModel;
-    private final SimpleVectorStore vectorStore;
+    private final VectorStore vectorStore;
 
     @Value("classpath:/templates/rag-prompt-template.st")
     private Resource ragPromptTemplate;

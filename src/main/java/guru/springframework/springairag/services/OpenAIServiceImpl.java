@@ -6,6 +6,7 @@ import guru.springframework.springairag.model.GetRecipeResponse;
 import guru.springframework.springairag.model.Question;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -36,6 +37,8 @@ public class OpenAIServiceImpl implements OpenAIService {
     @Value("classpath:templates/get-recipe-prompt.st")
     private Resource getRecipePrompt;
 
+    @Value("classpath:/templates/system-message.st")
+    private Resource systemMessageTemplate;
 
     @Override
     public GetRecipeResponse getRecipe(GetRecipeRequest getRecipeRequest) {
@@ -69,6 +72,26 @@ public class OpenAIServiceImpl implements OpenAIService {
         contentList.forEach(System.out::println);
 
         ChatResponse response = chatModel.call(prompt);
+
+        return new Answer(response.getResult().getOutput().getContent());
+    }
+
+    @Override
+    public Answer getAnswerSystemMessage(Question question) {
+
+        PromptTemplate systemMessagePromptTemplate = new PromptTemplate(systemMessageTemplate);
+        Message systemMessage = systemMessagePromptTemplate.createMessage();
+
+
+        List<Document> documents = vectorStore.similaritySearch(SearchRequest.builder()
+                .query(question.question()).topK(5).build());
+        List<String> contentList = documents.stream().map(Document::getContent).toList();
+
+        PromptTemplate promptTemplate = new PromptTemplate(ragPromptTemplate);
+        Message userMessage = promptTemplate.createMessage(Map.of("input", question.question(), "documents",
+                String.join("\n", contentList)));
+
+        ChatResponse response = chatModel.call(new Prompt(systemMessage, userMessage));
 
         return new Answer(response.getResult().getOutput().getContent());
     }

@@ -10,4 +10,5 @@ public interface OpenAIService {
     GetRecipeResponse getRecipe(GetRecipeRequest recipe);
 
     Answer getAnswer(Question question);
+    Answer getAnswerSystemMessage(Question question);
 }

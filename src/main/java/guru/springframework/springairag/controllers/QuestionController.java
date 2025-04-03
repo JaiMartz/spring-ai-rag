@@ -28,4 +28,9 @@ public class QuestionController {
     public Answer askQuestion(@RequestBody Question question) {
         return openAIService.getAnswer(question);
     }
+
+    @PostMapping("/ask/message")
+    public Answer askMessageQuestion(@RequestBody Question question){
+        return openAIService.getAnswerSystemMessage(question);
+    }
 }
